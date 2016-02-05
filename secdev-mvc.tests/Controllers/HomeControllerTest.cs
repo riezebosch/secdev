@@ -6,6 +6,10 @@ using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using secdev_mvc;
 using secdev_mvc.Controllers;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting.Web;
 
 namespace secdev_mvc.tests.Controllers
 {
@@ -49,6 +53,22 @@ namespace secdev_mvc.tests.Controllers
 
             // Assert
             Assert.IsNotNull(result);
+        }
+
+        public TestContext TestContext { get; set; }
+
+        [TestMethod]
+        [AspNetDevelopmentServer("DEMO", "secdev-mvc")]
+        public async Task InvalidateSessionAfterLogoutTest()
+        {
+            var url = (Uri)TestContext.Properties[$"{TestContext.AspNetDevelopmentServerPrefix}DEMO"];
+            Console.WriteLine($"Uri: {url}");
+
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetStringAsync(url);
+                Console.WriteLine(response);
+            }
         }
     }
 }
