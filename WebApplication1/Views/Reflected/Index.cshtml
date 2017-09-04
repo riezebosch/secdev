@@ -1,0 +1,15 @@
+﻿@model  System.Collections.Concurrent.ConcurrentBag<WebApplication1.Models.ReflectedModels.Message>
+
+<form asp-action="create" method="post" >
+    <textarea name="input"></textarea>
+    <button type="submit">Send!</button>
+</form>
+<ul>
+@foreach (var item in Model)
+{
+    <li>
+        <div>@item.User</div>
+        <div>@Html.Raw(@item.Script)</div>
+    </li>    
+}
+</ul>
