@@ -246,6 +246,7 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+            await _userManager.UpdateSecurityStampAsync(await _userManager.FindByNameAsync(User.Identity.Name));
             _logger.LogInformation("User logged out.");
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
