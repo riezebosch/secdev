@@ -41,9 +41,31 @@ namespace WebApplication1
             services.AddMvc();
 
             // This one's not working yet...
-            services.Configure<SessionOptions>(options => options.Cookie.HttpOnly = false);
+            services.Configure<SessionOptions>(options =>
+            {
+                options.Cookie.HttpOnly = false;
+                options.Cookie.Name = "LOGIN_COOKIE";
+                options.Cookie.Domain = "asdf.com";
+                options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+                options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.None;
+            });
+            services.Configure<CookiePolicyOptions>(o =>
+            {
+                o.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.None;
+                o.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+                o.Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.None;
+            });
 
-
+            services
+                .AddAuthentication()
+                .AddCookie(options =>
+                {
+                    options.Cookie.HttpOnly = false;
+                    options.Cookie.Name = "LOGIN_COOKIE";
+                    options.Cookie.Domain = "asdf.com";
+                    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+                    options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.None;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,7 +84,13 @@ namespace WebApplication1
 
             app.UseStaticFiles();
 
-            app.UseAuthentication();
+            app.UseAuthentication().UseCookiePolicy(new CookiePolicyOptions
+            {
+                Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.None,
+                HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.None,
+                MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None,
+
+            });
 
             app.UseMvc(routes =>
             {
